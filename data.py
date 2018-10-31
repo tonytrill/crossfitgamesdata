@@ -11,7 +11,7 @@ import pandas as pd
 
 entrants = []
 leaderboard_scores = []
-for i in range(1,4552):
+for i in range(1,4553):
     url = 'https://games.crossfit.com/competitions/api/v1/competitions/open/2018/leaderboards?division=1&region=0&scaled=0&sort=0&occupation=0&page='+str(i)
     response = requests.get(url)
     json_output = response.json()
@@ -50,6 +50,7 @@ for i in range(1,4552):
             entrant["height"] = h
     
         for score in scores:
+            # need to fix this
             score["competitorId"]=entrant["competitorId"]
             if "reps" in score["scoreDisplay"]:
                 reps = score["scoreDisplay"].split()
@@ -57,9 +58,14 @@ for i in range(1,4552):
                 score["cf_score"] = s
                 score["type"] = 'reps'
             if ":" in score["scoreDisplay"]:
-                score["cf_score"] = score["time"]
+                try:
+                    score["cf_score"] = score["time"]
+                except:
+                    x = score["scoreDisplay"].split(':')
+                    t = int(x[0])*60+int(x[1])
+                    score["cf_score"] = t
                 score["type"] = 'time'
-            if "lbs" in score["scoreDisplay"]:
+            if "lb" in score["scoreDisplay"]:
                 lbs = score["scoreDisplay"].split()
                 lb = int(lbs[0])
                 score["cf_score"] = lb
@@ -87,9 +93,11 @@ for i in range(1,4552):
             
         entrants.append(entrant)
         leaderboard_scores = leaderboard_scores + scores
+        
 
 entrants_csv = pd.DataFrame(entrants)
 scores_csv = pd.DataFrame(leaderboard_scores)
 
 entrants_csv.to_csv('D:/cf_data/athletes.csv')
 scores_csv.to_csv('D:/cf_data/scores.csv')
+        
