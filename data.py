@@ -6,16 +6,26 @@ CrossFit Games API Data Project
 
 import requests
 import pandas as pd
+import csv
 
 # ping the CF Games Open leaderboard and store the JSON
 
 entrants = []
 leaderboard_scores = []
+failed_pages = []
+
+# 4214
 for i in range(1,4553):
-    url = 'https://games.crossfit.com/competitions/api/v1/competitions/open/2018/leaderboards?division=1&region=0&scaled=0&sort=0&occupation=0&page='+str(i)
-    response = requests.get(url)
-    json_output = response.json()
-    print(i)
+    # Attempt to get the JSON data, if not then log that it failed in a list
+    try:
+        url = 'https://games.crossfit.com/competitions/api/v1/competitions/open/2018/leaderboards?division=1&region=0&scaled=0&sort=0&occupation=0&page='+str(i)
+        response = requests.get(url)
+        json_output = response.json()
+        print(i)
+    except:
+        print(i, " - failed to process page")
+        failed_pages.append(i)
+        continue
     # Athletes is a list of JSON athletes files
     athletes = json_output["leaderboardRows"]
     
@@ -48,9 +58,12 @@ for i in range(1,4553):
             height = entrant["height"].split()
             h = int(height[0])
             entrant["height"] = h
-    
+        
+        # Iterate through the scores and create new variables for each
+        # scores will be integers of either reps, seconds, or weight (lbs)
+        # create the "goal" of the workout, will be used to measure if someone
+        # beat a time cap or not.
         for score in scores:
-            # need to fix this
             score["competitorId"]=entrant["competitorId"]
             if "reps" in score["scoreDisplay"]:
                 reps = score["scoreDisplay"].split()
@@ -61,9 +74,12 @@ for i in range(1,4553):
                 try:
                     score["cf_score"] = score["time"]
                 except:
-                    x = score["scoreDisplay"].split(':')
-                    t = int(x[0])*60+int(x[1])
-                    score["cf_score"] = t
+                    try:
+                        x = score["scoreDisplay"].split(':')
+                        t = int(x[0])*60+int(x[1])
+                        score["cf_score"] = t
+                    except:
+                        score["cf_score"] = ""
                 score["type"] = 'time'
             if "lb" in score["scoreDisplay"]:
                 lbs = score["scoreDisplay"].split()
@@ -97,7 +113,12 @@ for i in range(1,4553):
 
 entrants_csv = pd.DataFrame(entrants)
 scores_csv = pd.DataFrame(leaderboard_scores)
+failed_pages.append('test')
 
 entrants_csv.to_csv('D:/cf_data/athletes.csv')
 scores_csv.to_csv('D:/cf_data/scores.csv')
-        
+
+with open('D:/cf_data/failed_pages.csv', 'w') as myfile:
+     wr = csv.writer(myfile, lineterminator='\n')
+     for page in failed_pages:
+         wr.writerow([page])
