@@ -21,13 +21,14 @@ for i in range(1,4553):
         url = 'https://games.crossfit.com/competitions/api/v1/competitions/open/2018/leaderboards?division=1&region=0&scaled=0&sort=0&occupation=0&page='+str(i)
         response = requests.get(url)
         json_output = response.json()
+        # Athletes is a list of JSON athletes files
+        athletes = json_output["leaderboardRows"]
         print(i)
     except:
         print(i, " - failed to process page")
         failed_pages.append(i)
         continue
-    # Athletes is a list of JSON athletes files
-    athletes = json_output["leaderboardRows"]
+    
     
     
     # The athlete object is a dictionary containing entrant information and scores
