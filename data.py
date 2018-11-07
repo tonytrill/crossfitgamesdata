@@ -114,7 +114,6 @@ for i in range(1,4553):
 
 entrants_csv = pd.DataFrame(entrants)
 scores_csv = pd.DataFrame(leaderboard_scores)
-failed_pages.append('test')
 
 entrants_csv.to_csv('D:/cf_data/athletes.csv')
 scores_csv.to_csv('D:/cf_data/scores.csv')
