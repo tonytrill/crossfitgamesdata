@@ -14,11 +14,11 @@ entrants = []
 leaderboard_scores = []
 failed_pages = []
 
-# 4214
-for i in range(1,4553):
+#
+for i in range(1, 3441):
     # Attempt to get the JSON data, if not then log that it failed in a list
     try:
-        url = 'https://games.crossfit.com/competitions/api/v1/competitions/open/2018/leaderboards?division=1&region=0&scaled=0&sort=0&occupation=0&page='+str(i)
+        url = 'https://games.crossfit.com/competitions/api/v1/competitions/open/2018/leaderboards?division=2&region=0&scaled=0&sort=0&occupation=0&page='+str(i)
         response = requests.get(url)
         json_output = response.json()
         # Athletes is a list of JSON athletes files
@@ -28,9 +28,7 @@ for i in range(1,4553):
         print(i, " - failed to process page")
         failed_pages.append(i)
         continue
-    
-    
-    
+
     # The athlete object is a dictionary containing entrant information and scores
     # scores are stored in a list of dictionaries for each score.
     
@@ -115,10 +113,10 @@ for i in range(1,4553):
 entrants_csv = pd.DataFrame(entrants)
 scores_csv = pd.DataFrame(leaderboard_scores)
 
-entrants_csv.to_csv('D:/cf_data/athletes.csv')
-scores_csv.to_csv('D:/cf_data/scores.csv')
+entrants_csv.to_csv('D:/cf_data/athletes_women.csv')
+scores_csv.to_csv('D:/cf_data/scores_women.csv')
 
-with open('D:/cf_data/failed_pages.csv', 'w') as myfile:
-     wr = csv.writer(myfile, lineterminator='\n')
-     for page in failed_pages:
-         wr.writerow([page])
+with open('D:/cf_data/failed_pages_female.csv', 'w') as myfile:
+    wr = csv.writer(myfile, lineterminator='\n')
+    for page in failed_pages:
+        wr.writerow([page])
