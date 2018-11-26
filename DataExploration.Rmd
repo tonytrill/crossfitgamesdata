@@ -1,0 +1,36 @@
+---
+title: "CrossFit Games Data"
+author: "Tony Silva"
+date: "November 14, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load Packages
+
+```{r, echo=FALSE}
+library(tidyverse)
+```
+
+### Load data and blend men and women into one data frame 
+
+```{r}
+# Load both csvs
+men <- read_csv('D:/cf_data/athletes_men.csv')
+women <- read_csv('D:/cf_data/athletes_women.csv')
+# women csv had NULL gender so adjusted
+women$gender <- 'F'
+# Load both csvs for scores
+scores_men <- read_csv('D:/cf_data/scores_men.csv')
+scores_women <- read_csv('D:/cf_data/scores_women.csv')
+
+# union all athletes and score files together and remove redundant dfs.
+athletes <- union(men, women)
+scores <- union(scores_men, scores_women)
+
+rm(men,women, scores_men, scores_women)
+```
+
