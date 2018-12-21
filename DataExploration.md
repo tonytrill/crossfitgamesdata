@@ -1,23 +1,17 @@
----
-title: "CrossFit Games Data"
-author: "Tony Silva"
-date: "November 14, 2018"
-output: rmarkdown::github_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+CrossFit Games Data
+================
+Tony Silva
+November 14, 2018
 
 ### Load Packages
 
-```{r, message=FALSE}
+``` r
 library("tidyverse")
 ```
 
-### Load data and blend men and women into one data frame 
+### Load data and blend men and women into one data frame
 
-```{r, message=FALSE, results=FALSE, warning=FALSE}
+``` r
 # Load both csvs
 men <- read_csv('D:/cf_data/athletes_men.csv')
 women <- read_csv('D:/cf_data/athletes_women.csv')
@@ -41,7 +35,7 @@ athletes$affiliateName[athletes$affiliateId==0] <- 'Unaffiliated'
 
 I want to create feature vectors for each athlete with all the columns I care about.
 
-```{r}
+``` r
 cf_score <- select(scores, competitorId, ordinal, cf_score) %>% 
   spread(ordinal, cf_score, fill = 0) %>% 
   rename(Score1='1', Score2='2', Score3='3', Score4='4', Score5='5', Score6='6')
@@ -60,20 +54,16 @@ athletes <- inner_join(athletes, cf_score, by='competitorId') %>%
   inner_join(scaled, by='competitorId')
 ```
 
-
-```{r}
+``` r
 rm(cf_score)
 rm(time_cap)
 rm(scaled)
 ```
 
-
 I want to build feature vectors for each gym in the data set. The goal is to describe each gym by the athletes that fall under it.
 
-```{r}
+``` r
 gyms <- athletes %>%
   group_by(affiliateName, affiliateId, regionName, regionId) %>%
   summarise(avgAge=mean(age), maxAge=max(age), minAge=min(age), numAthletes=n())
 ```
-
-
