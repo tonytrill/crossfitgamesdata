@@ -7,3 +7,5 @@ navbar:
       href: index.html
     - text: "About Me"
       href: about.html
+    - text: "CrossFit Data Exploration"
+      href: DataExploration.html
