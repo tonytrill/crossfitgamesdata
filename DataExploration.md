@@ -13,13 +13,13 @@ library("tidyverse")
 
 ``` r
 # Load both csvs
-men <- read_csv('D:/cf_data/athletes_men.csv')
-women <- read_csv('D:/cf_data/athletes_women.csv')
+men <- read_csv('/Users/silv6928/Data/athletes_men.csv')
+women <- read_csv('/Users/silv6928/Data/athletes_women.csv')
 # women csv had NULL gender so adjusted
 women$gender <- 'F'
 # Load both csvs for scores
-scores_men <- read_csv('D:/cf_data/scores_men.csv')
-scores_women <- read_csv('D:/cf_data/scores_women.csv')
+scores_men <- read_csv('/Users/silv6928/Data/scores_men.csv')
+scores_women <- read_csv('/Users/silv6928/Data/scores_women.csv')
 
 # union all athletes and score files together and remove redundant dfs.
 athletes <- union(men, women)
@@ -59,6 +59,12 @@ rm(cf_score)
 rm(time_cap)
 rm(scaled)
 ```
+
+``` r
+ggplot(athletes[athletes$Score1 != 0,], aes(x=Score1)) + geom_density() + facet_grid(. ~ gender)
+```
+
+![](DataExploration_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 I want to build feature vectors for each gym in the data set. The goal is to describe each gym by the athletes that fall under it.
 
